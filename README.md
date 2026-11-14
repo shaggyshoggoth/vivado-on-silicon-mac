@@ -9,6 +9,7 @@ The supported versions are:
 - 2023.1
 - 2023.2
 - 2024.1
+- 2026.1
 
 Due to unexpected behaviour in Rosetta emulation, most versions of macOS 14 (including 14.5) are not supported. macOS 13 may work, but the above versions were tested on macOS 15.
 
@@ -47,7 +48,14 @@ USB flashing support is limited, see the "USB Connection" paragraph below.
 
 If you want to exchange files with the container, you need to store them inside the "vivado-on-silicon-mac-main" folder. Inside Vivado, the files will be accessible via the "/home/user" folder.
 
-You can allocate more/less memory and CPU resources to Vivado by going to the Resources tab in the Docker settings.
+You can allocate more/less memory and CPU resources to Vivado by going to the Resources tab in the Docker settings. `configure_docker.sh` raises the VM's memory to 16 GiB (or less on Macs with under 24 GB of RAM). Docker's default of 8 GiB is too little to synthesize mid-sized designs: Vivado is then killed without an error message of its own, only a line ending in `Killed  "$RDI_PROG" "$@"` and exit status 137.
+
+### Licensing (2026.1)
+Vivado 2026.1 does not start at all without a license, not even in batch mode. Licenses are node-locked to the container's MAC address, which `start_container.sh` pins to `02:42:ac:1f:00:42` (set in `header.sh`) so that it survives container restarts. Generate the license on the AMD licensing site for host ID `0242ac1f0042`, then save it as `.Xilinx/Xilinx.lic` in this folder (or load it with the Vivado License Manager, `vlm`). Inside the container, `lmutil lmhostid` prints the host ID. Changing `container_mac` invalidates the license, and `cleanup.sh` deletes `.Xilinx/`, so back the license up first.
+
+Make sure the license tier covers your device. A license that does not cover a part makes that part disappear from Vivado (`No part matched the expression you provided`) rather than reporting a licensing error.
+
+2026.1 installs to `Xilinx/2026.1/Vivado` instead of `Xilinx/Vivado/<version>` as earlier releases did. The 2026.1 configuration installs Vivado only; to also get the Vitis embedded (MicroBlaze/Arm) software tools, set `Vitis Embedded Development:1` in `scripts/install_configs/202610.txt` before running `setup.sh` (about 6.6 GB more).
 
 ### Notes
 

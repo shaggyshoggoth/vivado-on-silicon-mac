@@ -25,6 +25,17 @@ RUN apt-get install -y --no-install-recommends \
     ocl-icd-opencl-dev libjpeg62-dev libc6-dev-i386 graphviz make \
     unzip libtinfo5 xvfb libncursesw5 locales libswt-gtk-4-jni
 
+# The FlexNet licensing binaries (Vivado/bin/unwrapped/lnx64.o/{lmutil,lmgrd})
+# are LSB executables: their ELF interpreter is /lib64/ld-lsb-x86-64.so.3,
+# which Ubuntu does not ship by default. Without it they fail to exec at all
+# ("rosetta error: failed to open elf at /lib64/ld-lsb-x86-64.so.3"), and the
+# Vivado License Manager -- which shells out to lmutil -- silently does nothing
+# when you click Obtain/Load License or open Diagnostics.
+#
+# `lsb` is what the installer's own installLibs.sh asks for; its lsb-core
+# dependency creates that loader symlink.
+RUN apt-get install -y lsb
+
 # install vnc server (with recommended installs)
 RUN apt-get install -y \
     tigervnc-standalone-server tigervnc-xorg-extension

@@ -14,3 +14,13 @@ installer/
 .vnc/
 .xsession-errors
 scripts/install_bin
+
+# Container-side state. .Xilinx/ holds the license (Xilinx.lic) and the AMD
+# web-install authentication token, so it must never be committed.
+.Xilinx/
+.flexlmrc
+.tcf/
+.bash_history
+.lesshst
+.sudo_as_admin_successful
+*.lic

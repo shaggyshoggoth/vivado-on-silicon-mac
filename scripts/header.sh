@@ -91,4 +91,14 @@ function set_vivado_version_from_hash {
 # The actual resolution is stored in the file vnc_resolution
 vnc_default_resolution="1920x1080"
 
+# Docker hands every new container a random MAC address and hostname. AMD
+# node-locked licenses bind to the MAC-derived hostid, so without pinning these
+# the license stops matching the moment you restart the container -- which is
+# why licensing appears to "break" at random here. Both values are arbitrary;
+# they only have to stay the same. 02: is a locally-administered prefix, and
+# 02:42:ac is what Docker itself uses, so this cannot collide with a real NIC.
+# If you change these AFTER generating a license, you must regenerate it.
+container_mac="02:42:ac:1f:00:42"
+container_hostname="vivado"
+
 current_user=$(whoami)
